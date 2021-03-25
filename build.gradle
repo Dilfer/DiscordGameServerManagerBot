@@ -1,5 +1,14 @@
 allprojects {
     repositories {
         mavenCentral()
+        repositories {
+            maven {
+                url = "s3://dilfers-source-code-bucket/maven-repo/"
+                credentials(AwsCredentials) {
+                    accessKey = System.getenv("AWS_ACCESS_KEY_ID") == null ? "Unknown" : System.getenv("AWS_ACCESS_KEY_ID")
+                    secretKey = System.getenv("AWS_SECRET_ACCESS_KEY") == null ? "Unknown" : System.getenv("AWS_SECRET_ACCESS_KEY")
+                }
+            }
+        }
     }
 }
