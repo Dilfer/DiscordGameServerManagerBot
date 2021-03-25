@@ -1,13 +1,56 @@
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
-group = 'com.dilfer.discord'
+group = 'com.dilfer'
 project.version = '1.0'
-project.description = 'Client package for DiscordBotApi'
+project.description = 'Client API for interacting with GameManager backend'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
 
 dependencies {
     compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     compile "com.amazonaws:aws-java-sdk-opensdk:1.11.710"
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': project.group + '.' + project.name,
+                'Implementation-Version': project.version
+        )
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+    repositories {
+        maven {
+            url = "s3://dilfers-source-code-bucket/maven-repo/"
+            credentials(AwsCredentials) {
+                accessKey = System.getenv("AWS_ACCESS_KEY_ID") == null ? "Unknown" : System.getenv("AWS_ACCESS_KEY_ID")
+                secretKey = System.getenv("AWS_SECRET_ACCESS_KEY") == null ? "Unknown" : System.getenv("AWS_SECRET_ACCESS_KEY")
+            }
+        }
+    }
 }
