@@ -1,6 +1,6 @@
 package com.dilfer.discord.bot;
 
-import com.dilfer.discord.DiscordBotApi;
+import com.dilfer.gamemanager.GameManager;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.object.presence.Activity;
@@ -24,7 +24,7 @@ public class GameServerManagerBotRunner
         DiscordClientBuilder builder = new DiscordClientBuilder(discordToken)
                 .setInitialPresence(Presence.online(Activity.playing("!manager help")));
         DiscordClient client = builder.build();
-        DiscordBotApi discordBotApi = DiscordBotApi.builder().apiKey(apiGatewayToken).build();
+        GameManager discordBotApi = GameManager.builder().apiKey(apiGatewayToken).build();
         GameServerManagerBot discordBot = new GameServerManagerBot(discordBotApi, client);
         addLogoutShutdownHook(client);
         discordBot.run();

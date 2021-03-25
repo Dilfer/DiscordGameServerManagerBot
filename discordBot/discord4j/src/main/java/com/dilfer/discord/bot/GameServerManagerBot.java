@@ -1,9 +1,9 @@
 package com.dilfer.discord.bot;
 
-import com.dilfer.discord.DiscordBotApi;
 import com.dilfer.discord.commands.HelpCommand;
 import com.dilfer.discord.commands.ServerCommand;
 import com.dilfer.discord.commands.ServerManagerCommands;
+import com.dilfer.gamemanager.GameManager;
 import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
@@ -19,10 +19,10 @@ public class GameServerManagerBot
 {
     private static final Logger logger = LoggerFactory.getLogger(GameServerManagerBot.class);
 
-    private final DiscordBotApi discordBotApi;
+    private final GameManager discordBotApi;
     private final DiscordClient client;
 
-    public GameServerManagerBot(DiscordBotApi discordBotApi,
+    public GameServerManagerBot(GameManager discordBotApi,
                                 DiscordClient client)
     {
 
@@ -66,7 +66,7 @@ public class GameServerManagerBot
         return message.getAuthor().map(user -> !user.isBot()).orElse(false);
     }
 
-    private static Mono<Message> runCommand(DiscordBotApi discordBotApi, ServerCommand command, Message message)
+    private static Mono<Message> runCommand(GameManager discordBotApi, ServerCommand command, Message message)
     {
         Guild guild = message.getGuild().block();
 

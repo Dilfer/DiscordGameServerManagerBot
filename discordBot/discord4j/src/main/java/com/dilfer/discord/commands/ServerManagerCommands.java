@@ -1,7 +1,7 @@
 package com.dilfer.discord.commands;
 
-import com.dilfer.discord.DiscordBotApi;
-import com.dilfer.discord.model.*;
+import com.dilfer.gamemanager.GameManager;
+import com.dilfer.gamemanager.model.*;
 import discord4j.core.object.entity.Guild;
 
 import java.util.Arrays;
@@ -45,15 +45,15 @@ public enum ServerManagerCommands
         }
 
         @Override
-        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, DiscordBotApi discordBotApi)
+        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, GameManager discordBotApi)
         {
             String game = suppliedArguments.iterator().next();
-            PostServermanagerStartRequest startServerRequest = new PostServermanagerStartRequest()
+            PostServermanagerStartserverRequest startServerRequest = new PostServermanagerStartserverRequest()
                     .startServerRequest(new StartServerRequest()
                             .game(game)
                             .guild(guild.getName()));
 
-            PostServermanagerStartResult startResult = discordBotApi.postServermanagerStart(startServerRequest);
+            PostServermanagerStartserverResult startResult = discordBotApi.postServermanagerStartserver(startServerRequest);
             StartServerResponse startServerResponse = startResult.getStartServerResponse();
             return String.format("The %s server has transitioned from %s to %s",
                     game,
@@ -72,15 +72,15 @@ public enum ServerManagerCommands
         }
 
         @Override
-        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, DiscordBotApi discordBotApi)
+        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, GameManager discordBotApi)
         {
             String game = suppliedArguments.iterator().next();
-            PostServermanagerStopRequest stopRequest = new PostServermanagerStopRequest()
+            PostServermanagerStopserverRequest stopRequest = new PostServermanagerStopserverRequest()
                     .stopServerRequest(new StopServerRequest()
                             .game(game)
                             .guild(guild.getName()));
 
-            PostServermanagerStopResult stopResult = discordBotApi.postServermanagerStop(stopRequest);
+            PostServermanagerStopserverResult stopResult = discordBotApi.postServermanagerStopserver(stopRequest);
             StopServerResponse stopServerResponse = stopResult.getStopServerResponse();
             return String.format("The %s server has transitioned from %s to %s",
                     game,
@@ -99,13 +99,13 @@ public enum ServerManagerCommands
         }
 
         @Override
-        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, DiscordBotApi discordBotApi)
+        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, GameManager discordBotApi)
         {
             String game = suppliedArguments.iterator().next();
-            PostServermanagerInfoRequest request = new PostServermanagerInfoRequest().serverInfoRequest(new ServerInfoRequest()
+            PostServermanagerServerinfoRequest request = new PostServermanagerServerinfoRequest().serverInfoRequest(new ServerInfoRequest()
                     .game(game)
                     .guild(guild.getName()));
-            PostServermanagerInfoResult serverInfo = discordBotApi.postServermanagerInfo(request);
+            PostServermanagerServerinfoResult serverInfo = discordBotApi.postServermanagerServerinfo(request);
             ServerInfoResponse response = serverInfo.getServerInfoResponse();
             return String.format("The %s server is in the %s state with public IP %s", game, response.getInstanceState(), response.getIpAddress());
         }
@@ -119,13 +119,13 @@ public enum ServerManagerCommands
         }
 
         @Override
-        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, DiscordBotApi discordBotApi)
+        String callApiAndGetUserFriendlyMessage(List<String> suppliedArguments, Guild guild, GameManager discordBotApi)
         {
-            GetServermanagerListgamesRequest request = new GetServermanagerListgamesRequest()
+            PostServermanagerListgamesRequest request = new PostServermanagerListgamesRequest()
                     .listGamesRequest(new ListGamesRequest()
                             .guild(guild.getName()));
 
-            GetServermanagerListgamesResult servermanagerListgames = discordBotApi.getServermanagerListgames(request);
+            PostServermanagerListgamesResult servermanagerListgames = discordBotApi.postServermanagerListgames(request);
             ListGamesResponse response = servermanagerListgames.getListGamesResponse();
             return String.format("The discord guild %s is configured for the following games : %s", guild, response.getGames());
         }
