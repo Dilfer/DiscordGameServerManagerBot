@@ -1,6 +1,6 @@
 package com.dilfer.discord.commands;
 
-import com.dilfer.discord.DiscordBotApi;
+import com.dilfer.gamemanager.GameManager;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.MessageChannel;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ServerCommand
 {
-    Mono<Message> run(MessageChannel messageChannel, DiscordBotApi discordBotApi, Guild guild, String message);
+    Mono<Message> run(MessageChannel messageChannel, GameManager discordBotApi, Guild guild, String message);
 
     String getCommandString();
 
