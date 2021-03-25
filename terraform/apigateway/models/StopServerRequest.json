@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StopServerRequest",
+  "type": "object",
+  "properties": {
+    "guild": {
+      "type": "string"
+    },
+    "game": {
+      "type": "string"
+    }
+  },
+  "required": ["guild", "game"]
+}

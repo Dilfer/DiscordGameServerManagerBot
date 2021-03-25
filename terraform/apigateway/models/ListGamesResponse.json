@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ListGamesResponse",
+  "type": "object",
+  "properties": {
+    "games": {
+      "type": "array",
+      "default": [],
+      "items" : {"type" : "string"}
+    }
+  },
+  "required": ["games"]
+}
