@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "StartServerResponse",
+  "type": "object",
+  "properties": {
+    "originalState": {
+      "type": "string"
+    },
+    "newState": {
+      "type": "string"
+    }
+  },
+  "required": ["originalState", "newState"]
+}
