@@ -13,6 +13,8 @@ resource aws_api_gateway_api_key discord_bot {
 
 resource aws_api_gateway_deployment prod {
   rest_api_id = aws_api_gateway_rest_api.game_manager_rest_api.id
+  description = "Deployed at ${timestamp()}"
+  stage_description = timestamp()
   triggers = {
     redeployment = timestamp()
   }

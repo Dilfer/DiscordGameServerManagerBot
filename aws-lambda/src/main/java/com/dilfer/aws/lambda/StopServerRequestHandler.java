@@ -8,8 +8,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.util.json.Jackson;
-import com.dilfer.discord.model.StopServerRequest;
-import com.dilfer.discord.model.StopServerResponse;
+import com.dilfer.gamemanager.model.StopServerRequest;
+import com.dilfer.gamemanager.model.StopServerResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,22 +27,30 @@ public class StopServerRequestHandler implements RequestHandler<APIGatewayProxyR
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context)
     {
-        context.getLogger().log(Jackson.toJsonPrettyString(input));
-        StopServerRequest stopServerRequest = Jackson.fromJsonString(input.getBody(), StopServerRequest.class);
-        context.getLogger().log(String.format("Got a stop server request for guild %s and game %s. ",
-                stopServerRequest.getGuild(),
-                stopServerRequest.getGame()));
+        try
+        {
+            context.getLogger().log(Jackson.toJsonPrettyString(input));
+            StopServerRequest stopServerRequest = Jackson.fromJsonString(input.getBody(), StopServerRequest.class);
+            context.getLogger().log(String.format("Got a stop server request for guild %s and game %s. ",
+                    stopServerRequest.getGuild(),
+                    stopServerRequest.getGame()));
 
-        String instanceId = ec2ApiMarshaller.marshallRequest(ec2 -> describeInstances(ec2, stopServerRequest),
-                this::getInstanceId);
-        StopServerResponse stopServerResponse = ec2ApiMarshaller.marshallRequest(ec2 -> getInstanceStateChanges(ec2, instanceId),
-                this::getResponse);
+            String instanceId = ec2ApiMarshaller.marshallRequest(ec2 -> describeInstances(ec2, stopServerRequest),
+                    this::getInstanceId);
+            StopServerResponse stopServerResponse = ec2ApiMarshaller.marshallRequest(ec2 -> getInstanceStateChanges(ec2, instanceId),
+                    this::getResponse);
 
-        String jsonStringResponse = Jackson.toJsonString(stopServerResponse);
-        context.getLogger().log("Sending response " + jsonStringResponse);
-        return new APIGatewayProxyResponseEvent()
-                .withBody(jsonStringResponse)
-                .withStatusCode(200);
+            String jsonStringResponse = Jackson.toJsonString(stopServerResponse);
+            context.getLogger().log("Sending response " + jsonStringResponse);
+            return new APIGatewayProxyResponseEvent()
+                    .withBody(jsonStringResponse)
+                    .withStatusCode(200);
+        }
+        catch (Exception e)
+        {
+            context.getLogger().log("Got an exception" + e.getMessage());
+            throw e;
+        }
     }
 
     private List<Instance> describeInstances(AmazonEC2 ec2, StopServerRequest request)

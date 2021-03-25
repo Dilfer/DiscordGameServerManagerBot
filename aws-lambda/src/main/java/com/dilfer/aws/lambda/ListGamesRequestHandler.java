@@ -8,8 +8,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.util.json.Jackson;
-import com.dilfer.discord.model.ListGamesRequest;
-import com.dilfer.discord.model.ListGamesResponse;
+import com.dilfer.gamemanager.model.ListGamesRequest;
+import com.dilfer.gamemanager.model.ListGamesResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,20 +27,25 @@ public class ListGamesRequestHandler implements RequestHandler<APIGatewayProxyRe
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context)
     {
-        context.getLogger().log(Jackson.toJsonPrettyString(input));
-        ListGamesRequest listGamesRequest = Jackson.fromJsonString(input.getBody(), ListGamesRequest.class);
 
-        context.getLogger().log(String.format("Got a list games request for guild %s.",
-                                              listGamesRequest.getGuild()));
+        try {
+            context.getLogger().log(Jackson.toJsonPrettyString(input));
+            ListGamesRequest listGamesRequest = Jackson.fromJsonString(input.getBody(), ListGamesRequest.class);
 
-        List<String> guildGames = getGames(listGamesRequest.getGuild());
-        ListGamesResponse response = new ListGamesResponse().games(guildGames);
-        String jsonResponse = Jackson.toJsonString(response);
-        context.getLogger().log("Sending response " + jsonResponse);
+            context.getLogger().log(String.format("Got a list games request for guild %s.",
+                                                  listGamesRequest.getGuild()));
 
-        return new APIGatewayProxyResponseEvent()
-                .withBody(jsonResponse)
-                .withStatusCode(200);
+            List<String> guildGames = getGames(listGamesRequest.getGuild());
+            ListGamesResponse response = new ListGamesResponse().games(guildGames);
+            String jsonResponse = Jackson.toJsonString(response);
+            context.getLogger().log("Sending response " + jsonResponse);
+            return new APIGatewayProxyResponseEvent()
+                    .withBody(jsonResponse)
+                    .withStatusCode(200);
+        } catch (Exception e) {
+            context.getLogger().log("Got an exception" + e.getMessage());
+            throw e;
+        }
     }
 
     private List<String> getGames(String guild)

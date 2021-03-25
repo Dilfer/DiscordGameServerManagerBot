@@ -3,7 +3,7 @@ locals {
      list_games = {
        name = "ListGames",
        requestHandler = "com.dilfer.aws.lambda.ListGamesRequestHandler::handleRequest",
-       allowed_ec2_actions = ["ec2:DescribeInstances"],
+       allowed_ec2_actions = ["ec2:DescribeInstances", "ec2:DescribeTags"],
        http_method = "GET",
        path_part = "listgames"
     },
@@ -39,7 +39,7 @@ module "game_server_backend_lambda" {
   handler                    = each.value["requestHandler"]
   http_method                = each.value["http_method"]
   s3_bucket                  = "dilfers-source-code-bucket"
-  s3_key                     = "DiscordBotGameManager/aws-lambda-0.1.zip"
+  s3_key                     = "DiscordBotGameManager/aws-lambda-1.1.zip"
   api_id                     = aws_api_gateway_rest_api.game_manager_rest_api.id
   aws_account_id             = data.aws_caller_identity.current.account_id
   path_parent_id             = aws_api_gateway_resource.server_manager.id
