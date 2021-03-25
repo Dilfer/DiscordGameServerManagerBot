@@ -8,8 +8,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.util.json.Jackson;
-import com.dilfer.discord.model.StartServerRequest;
-import com.dilfer.discord.model.StartServerResponse;
+import com.dilfer.gamemanager.model.StartServerRequest;
+import com.dilfer.gamemanager.model.StartServerResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,22 +27,30 @@ public class StartServerRequestHandler implements RequestHandler<APIGatewayProxy
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context)
     {
+        try
+        {
         context.getLogger().log(Jackson.toJsonPrettyString(input));
         StartServerRequest startServerRequest = Jackson.fromJsonString(input.getBody(), StartServerRequest.class);
         context.getLogger().log(String.format("Got a start server request for guild %s and game %s. ",
-                                               startServerRequest.getGuild(),
-                                               startServerRequest.getGame()));
+                startServerRequest.getGuild(),
+                startServerRequest.getGame()));
 
         String instanceId = ec2ApiMarshaller.marshallRequest(ec2 -> describeInstances(ec2, startServerRequest),
-                                                                                      this::getInstanceId);
+                this::getInstanceId);
         StartServerResponse startServerResponse = ec2ApiMarshaller.marshallRequest(ec2 -> getInstanceStateChanges(ec2, instanceId),
-                                                                                   this::getResponse);
+                this::getResponse);
 
         String jsonStringResponse = Jackson.toJsonString(startServerResponse);
         context.getLogger().log("Sending response " + jsonStringResponse);
         return new APIGatewayProxyResponseEvent()
                 .withBody(jsonStringResponse)
                 .withStatusCode(200);
+        }
+        catch (Exception e)
+        {
+            context.getLogger().log("Got an exception" + e.getMessage());
+            throw e;
+        }
     }
 
     private List<Instance> describeInstances(AmazonEC2 ec2, StartServerRequest request)

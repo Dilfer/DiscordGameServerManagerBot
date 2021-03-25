@@ -127,7 +127,7 @@ public enum ServerManagerCommands
 
             PostServermanagerListgamesResult servermanagerListgames = discordBotApi.postServermanagerListgames(request);
             ListGamesResponse response = servermanagerListgames.getListGamesResponse();
-            return String.format("The discord guild %s is configured for the following games : %s", guild, response.getGames());
+            return String.format("The discord guild %s is configured for the following games : %s", guild.getName(), response.getGames());
         }
     }
 }
