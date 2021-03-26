@@ -62,6 +62,7 @@ public class ListGamesRequestHandler implements RequestHandler<APIGatewayProxyRe
                 .stream()
                 .map(Reservation::getInstances)
                 .flatMap(Collection::stream)
+                .filter(instance -> !"terminated".equals(instance.getState().getName()))
                 .map(Instance::getTags)
                 .flatMap(Collection::stream)
                 .filter(tag -> "Game".equalsIgnoreCase(tag.getKey()))
